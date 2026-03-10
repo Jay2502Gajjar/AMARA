@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AMARA — Research Assistant</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+
+    
+    :root {
+      --bg:      #07090d;    
+      --surface: #0e1117;   
+      --border:  #1e2530;   
+      --accent:  #f5a623;   
+      --text:    #dde3ed;   
+      --muted:   #5a6478;    
+      --green:   #3ecf72;   
+      --blue:    #4fa8ff;   
+      --red:     #f55353;  
+    }
+
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+   
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+
+      background-image:
+        linear-gradient(rgba(245,166,35,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245,166,35,0.04) 1px, transparent 1px);
+      background-size: 44px 44px;
+    }
+
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(7,9,13,0.88);
+      backdrop-filter: blur(10px); 
+      border-bottom: 1px solid var(--border);
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between; 
+      align-items: center;
+    }
+
+    .logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+    .logo span { color: var(--accent); }
+
+    .header-status {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    
+    .status-dot {
+      width: 7px; height: 7px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+
+    main { max-width: 860px; margin: 0 auto; padding: 64px 24px 120px; }
+
+   
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+
+    .hero { text-align: center; margin-bottom: 52px; animation: fadeUp .6s ease both; }
+
+    .hero-tag {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(245,166,35,.3);
+      padding: 5px 14px; border-radius: 2px; margin-bottom: 22px;
+    }
+
+   
+    .hero h1 { font-size: clamp(34px,5.5vw,60px); font-weight:800; line-height:1.08; letter-spacing:-2px; margin-bottom:18px; }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero p { font-size: 15px; color: var(--muted); max-width: 480px; margin: 0 auto; line-height: 1.75; }
+
+    
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+      margin-bottom: 20px;
+      position: relative; overflow: hidden;
+    }
+    
+    .panel.accent-top::before {
+      content:''; position:absolute; top:0;left:0;right:0;
+      height:2px; background: linear-gradient(90deg, var(--accent), #e07010);
+    }
+    .panel.green-top::before {
+      content:''; position:absolute; top:0;left:0;right:0;
+      height:2px; background: linear-gradient(90deg, var(--green), var(--blue));
+    }
+
+    .panel-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 16px;
+    }
+
+    .query-panel { animation: fadeUp .6s .15s ease both; }
+
+    .input-row { display: flex; gap: 14px; align-items: flex-end; }
+
+    #queryInput {
+      flex: 1;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: 'Space Mono', monospace; font-size: 13px;
+      line-height: 1.7; padding: 14px 16px; resize: none; height: 96px; outline: none;
+      transition: border-color .2s;
+    }
+    #queryInput:focus { border-color: var(--accent); }
+    #queryInput::placeholder { color: var(--muted); opacity: .6; }
+
+    #runBtn {
+      background: var(--accent); color: #000; border: none; border-radius: 6px;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px;
+      padding: 0 26px; height: 96px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+      white-space: nowrap; transition: background .15s, transform .1s;
+    }
+    #runBtn:hover    { background: #ffb830; }
+    #runBtn:active   { transform: scale(.97); }
+    #runBtn:disabled { background: var(--muted); cursor: not-allowed; }
+    #runBtn svg      { width: 18px; height: 18px; }
+
+    /* Example query chips */
+    .examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .chip {
+      font-family: 'Space Mono', monospace; font-size: 11px;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); padding: 5px 13px; border-radius: 100px; cursor: pointer;
+      transition: all .15s;
+    }
+    .chip:hover { border-color: var(--accent); color: var(--accent); }
+
+    
+    .error-box {
+      background: rgba(245,83,83,.08); border: 1px solid rgba(245,83,83,.3);
+      border-radius: 6px; padding: 14px 18px;
+      font-family: 'Space Mono', monospace; font-size: 12px; color: var(--red);
+      margin-bottom: 20px;
+      display: none; 
+    }
+    .error-box.visible { display: block; }
+
+  
+    .pipeline-panel { display: none; }
+    .pipeline-panel.visible { display: block; animation: fadeUp .4s ease both; }
+
+
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px; margin-top: 20px;
+    }
+
+    .agent-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 18px 12px; text-align: center;
+      position: relative; overflow: hidden;
+      transition: border-color .3s, box-shadow .3s;
+    }
+
+    
+    .agent-card.running { border-color: var(--accent); box-shadow: 0 0 18px rgba(245,166,35,.15); }
+    .agent-card.done    { border-color: var(--green);  box-shadow: 0 0 18px rgba(62,207,114,.1); }
+    .agent-card.error   { border-color: var(--red); }
+
+    
+    .agent-card::after {
+      content:''; position:absolute; bottom:0; left:0;
+      height:2px; width:100%; background:transparent; transition: background .3s;
+    }
+    .agent-card.running::after { background: var(--accent); animation: sweep 1.6s ease-in-out infinite; }
+    .agent-card.done::after    { background: var(--green); animation: none; }
+    @keyframes sweep { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+
+    .agent-icon   { font-size: 26px; margin-bottom: 10px; }
+    .agent-name   { font-size: 11px; font-weight: 700; letter-spacing: .3px; margin-bottom: 5px; }
+    .agent-status { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); }
+    .agent-card.running .agent-status { color: var(--accent); }
+    .agent-card.done    .agent-status { color: var(--green); }
+    .agent-card.error   .agent-status { color: var(--red); }
+
+    
+    .result-panel { display: none; }
+    .result-panel.visible { display: block; animation: fadeUp .5s ease both; }
+
+    .result-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
+    .result-title  { font-size: 17px; font-weight: 700; }
+
+    .badge-complete {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      color: var(--green); background: rgba(62,207,114,.1);
+      border: 1px solid rgba(62,207,114,.3);
+      padding: 4px 10px; border-radius: 2px; letter-spacing: 1px;
+    }
+
+    #reportContent {
+      font-family: 'Space Mono', monospace; font-size: 13px;
+      line-height: 1.85; color: var(--text); white-space: pre-wrap;
+    }
+    #reportContent h2     { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:var(--accent); margin:24px 0 10px; }
+    #reportContent strong { color: var(--blue); }
+    #reportContent ul     { list-style: none; padding: 0; }
+    #reportContent ul li::before { content:'▸ '; color:var(--accent); }
+
+    .cursor {
+      display:inline-block; width:8px; height:14px;
+      background:var(--accent); vertical-align:middle; margin-left:2px;
+      animation: blink .7s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  
+    footer {
+      border-top: 1px solid var(--border); padding: 18px 40px;
+      display: flex; justify-content: space-between;
+      font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted);
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    
+    @media (max-width: 640px) {
+      header, footer { padding: 14px 20px; }
+      main { padding: 40px 16px 80px; }
+      .agents-grid { grid-template-columns: repeat(2, 1fr); }
+      .input-row { flex-direction: column; }
+      #runBtn { height: 52px; width: 100%; flex-direction: row; }
+      footer { flex-direction: column; gap: 6px; }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">AM<span>AR</span>A</div>
+    <div class="header-status">
+      <div class="status-dot"></div>
+      System Online &nbsp;·&nbsp; GPT-4 &nbsp;·&nbsp; 5 Agents
+    </div>
+  </header>
+
+
+  <main>
+
+  
+    <div class="hero">
+      <div class="hero-tag">Multi-Agent Research System</div>
+      <h1>Research at the<br/>speed of <em>thought.</em></h1>
+      <p>Five specialized AI agents collaborate to plan, search, summarize,
+         validate, and present answers to your research questions.</p>
+    </div>
+
+
+    
+    <div class="panel accent-top query-panel">
+      <div class="panel-label">// Research Query</div>
+
+      <div class="input-row">
+        
+        <textarea
+          id="queryInput"
+          placeholder="e.g. Explain quantum computing and list important research papers..."
+        ></textarea>
+
+        
+        <button id="runBtn" onclick="startResearch()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5 3l14 9-14 9V3z"/>
+          </svg>
+          Run Agents
+        </button>
+      </div>
+
+      <div class="examples">
+        <span class="chip" onclick="fillQuery(this)">Quantum computing</span>
+        <span class="chip" onclick="fillQuery(this)">CRISPR gene editing</span>
+        <span class="chip" onclick="fillQuery(this)">Large language models</span>
+        <span class="chip" onclick="fillQuery(this)">Black hole imaging</span>
+      </div>
+    </div>
+
+
+    <div class="error-box" id="errorBox"></div>
+
+
+    <div class="panel accent-top pipeline-panel" id="pipelinePanel">
+      <div class="panel-label">// Agent Pipeline — Live Status</div>
+      <div class="agents-grid" id="agentsGrid">
+       
+      </div>
+    </div>
+
+
+    
+    <div class="panel green-top result-panel" id="resultPanel">
+      <div class="result-header">
+        <div class="result-title">Research Report</div>
+        <div class="badge-complete">✓ COMPLETE</div>
+      </div>
+      <div id="reportContent"></div>
+    </div>
+
+  </main>
+
+
+
+
+  <footer>
+    <span>AMARA v1.0 — Autonomous Multi-Agent Research Assistant</span>
+    <span>Spring Boot · Python · OpenAI GPT-4</span>
+  </footer>
+
+
+ 
+  <script src="script.js"></script>
+
+</body>
+</html>
